@@ -640,6 +640,7 @@ class GameEngine {
     this.closeAchievements = document.getElementById('closeAchievements');
     this.achievementsList = document.getElementById('achievementsList');
     this.careerStatsContainer = document.getElementById('careerStats');
+    this.dinoColorPicker = document.getElementById('dinoColorPicker');
 
     this.updateHUD();
   }
@@ -695,6 +696,12 @@ class GameEngine {
   // ============================================================
   setupListeners() {
     window.addEventListener('resize', () => this.handleResize());
+
+    if (this.dinoColorPicker) {
+      this.dinoColorPicker.addEventListener('input', (e) => {
+        this.customDinoColor = e.target.value;
+      });
+    }
 
     // Keyboard
     window.addEventListener('keydown', (e) => {
@@ -1684,7 +1691,7 @@ class GameEngine {
     }
 
     const pixelSize = 3;
-    const dinoColor = colors.dino;
+    const dinoColor = this.customDinoColor || colors.dino;
 
     // Draw procedural pixel matrix
     ctx.fillStyle = dinoColor;
