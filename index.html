@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Chrome Dino: Evolution | Modern Retro Arcade Web Game</title>
+  <meta name="description" content="Play the enhanced Chrome Dino T-Rex Runner game with dynamic day/night cycles, multiple neon themes, sound effects, power-ups, achievements, and responsive controls!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-cyberpunk">
+  <!-- Scanline / CRT Retro Overlay (Toggleable) -->
+  <div class="crt-overlay" id="crtOverlay"></div>
+
+  <div class="app-container">
+    <!-- Top Navigation / Header Bar -->
+    <header class="game-header">
+      <div class="brand">
+        <span class="brand-icon">🦖</span>
+        <div class="brand-text">
+          <h1>DINO RUNNER</h1>
+          <span class="badge">EVOLUTION ARCADE</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- Theme Selector Dropdown / Buttons -->
+        <div class="theme-picker" id="themePicker">
+          <button class="theme-btn active" data-theme="cyberpunk" title="Cyberpunk Neon">🌆 Neon</button>
+          <button class="theme-btn" data-theme="classic" title="Classic Monochrome">🕹️ Classic</button>
+          <button class="theme-btn" data-theme="sunset" title="Desert Sunset">🏜️ Sunset</button>
+          <button class="theme-btn" data-theme="matrix" title="Matrix Green">💻 Matrix</button>
+        </div>
+
+        <!-- Sound & Music Toggles -->
+        <div class="audio-controls">
+          <button class="icon-btn" id="sfxToggle" title="Toggle Sound Effects (S)">
+            <span class="btn-icon">🔊</span>
+            <span class="btn-label">SFX</span>
+          </button>
+          <button class="icon-btn" id="musicToggle" title="Toggle Retro BGM (M)">
+            <span class="btn-icon">🎵</span>
+            <span class="btn-label">BGM</span>
+          </button>
+          <button class="icon-btn" id="crtToggle" title="Toggle CRT Retro Filter">
+            <span class="btn-icon">📺</span>
+            <span class="btn-label">CRT</span>
+          </button>
+          <button class="icon-btn" id="achievementsBtn" title="View Achievements">
+            <span class="btn-icon">🏆</span>
+            <span class="btn-label">Badges</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Game Frame -->
+    <main class="game-wrapper">
+      <!-- HUD Floating Bar above Canvas -->
+      <div class="hud-bar">
+        <div class="hud-left">
+          <div class="stat-pill speed-pill">
+            <span class="label">SPEED</span>
+            <span class="value" id="hudSpeed">1.0x</span>
+          </div>
+          <div class="stat-pill health-pill">
+            <span class="label">HP</span>
+            <span class="value" id="hudHealth">❤️❤️❤️</span>
+          </div>
+          <div class="stat-pill powerup-pill hidden" id="hudPowerupPill">
+            <span class="powerup-icon" id="hudPowerupIcon">🛡️</span>
+            <span class="powerup-name" id="hudPowerupName">SHIELD</span>
+            <div class="powerup-meter-bg">
+              <div class="powerup-meter-fill" id="hudPowerupFill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hud-right">
+          <div class="stat-pill high-score-pill">
+            <span class="label">HI</span>
+            <span class="value" id="hudHighScore">00000</span>
+          </div>
+          <div class="stat-pill current-score-pill">
+            <span class="label">SCORE</span>
+            <span class="value" id="hudCurrentScore">00000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas Container -->
+      <div class="canvas-viewport" id="canvasViewport">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Start / Idle Overlay -->
+        <div class="game-overlay start-overlay" id="startOverlay">
+          <div class="overlay-card glass-panel">
+            <div class="card-icon pulse-bounce">🦖</div>
+            <h2>PRESS SPACE TO JUMP</h2>
+            <p class="subtitle">Run, jump, duck, and collect power-ups to survive!</p>
+            
+            <div class="control-hints">
+              <div class="hint-item">
+                <kbd>SPACE</kbd> / <kbd>↑</kbd> <span>Jump</span>
+              </div>
+              <div class="hint-item">
+                <kbd>↓</kbd> / <kbd>S</kbd> <span>Duck</span>
+              </div>
+              <div class="hint-item">
+                <kbd>P</kbd> <span>Pause</span>
+              </div>
+            </div>
+
+            <button class="btn-play-primary" id="btnPlay">START RUN</button>
+          </div>
+        </div>
+
+        <!-- Pause Overlay -->
+        <div class="game-overlay pause-overlay hidden" id="pauseOverlay">
+          <div class="overlay-card glass-panel">
+            <h2>GAME PAUSED</h2>
+            <p>Take a breath, Dino!</p>
+            <div class="pause-actions">
+              <button class="btn-play-primary" id="btnResume">RESUME (P)</button>
+              <button class="btn-secondary" id="btnRestartFromPause">RESTART</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div class="game-overlay gameover-overlay hidden" id="gameOverOverlay">
+          <div class="overlay-card glass-panel">
+            <div class="card-icon shake-animation">💥</div>
+            <h2 class="gameover-title">GAME OVER</h2>
+            
+            <div class="score-summary">
+              <div class="score-box">
+                <span class="score-label">FINAL SCORE</span>
+                <span class="score-val" id="finalScoreVal">00000</span>
+              </div>
+              <div class="score-box highlight">
+                <span class="score-label">BEST RECORD</span>
+                <span class="score-val" id="bestScoreVal">00000</span>
+              </div>
+            </div>
+
+            <div class="new-record-banner hidden" id="newRecordBanner">
+              ✨ NEW HIGH SCORE! ✨
+            </div>
+
+            <div class="run-stats">
+              <span id="statDistance">🏃 Distance: 0m</span>
+              <span id="statPowerups">⚡ Powerups: 0</span>
+              <span id="statDodges">🦅 Birds Dodged: 0</span>
+            </div>
+
+            <div class="leaderboard-section" id="leaderboardSection">
+              <h4>🏆 Top 5 Players</h4>
+              <ul id="leaderboardList" class="leaderboard-list">
+                <!-- Populated by JavaScript -->
+              </ul>
+            </div>
+
+            <button class="btn-play-primary" id="btnRestart">RUN AGAIN (<kbd>SPACE</kbd>)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile / Touch Controls Bar -->
+      <div class="touch-controls" id="touchControls">
+        <button class="touch-btn duck-btn" id="touchDuck">
+          <span class="touch-icon">⬇️</span>
+          <span class="touch-text">DUCK</span>
+        </button>
+        <button class="touch-btn jump-btn" id="touchJump">
+          <span class="touch-icon">⬆️</span>
+          <span class="touch-text">JUMP</span>
+        </button>
+      </div>
+
+      <!-- Instructions & Features Bar Below Game -->
+      <div class="game-footer-info">
+        <div class="info-card">
+          <h4>🎮 Controls</h4>
+          <p><kbd>Space</kbd> or <kbd>↑</kbd> to Jump (hold longer for higher jump). <kbd>↓</kbd> to Duck under birds. <kbd>P</kbd> to Pause.</p>
+        </div>
+        <div class="info-card">
+          <h4>⚡ Power-ups</h4>
+          <p>Grab 🛡️ <strong>Shield</strong> to survive hits, ⏱️ <strong>Slow-Mo</strong> to slow obstacles, and ⭐ <strong>Jetpack</strong> to soar over hazards!</p>
+        </div>
+        <div class="info-card">
+          <h4>🌗 Day & Night</h4>
+          <p>Watch the sky shift from sunrise to starry twilight with dynamic stars and speed ramping every 100 points.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Achievements Modal -->
+    <div class="modal-backdrop hidden" id="achievementsModal">
+      <div class="modal-card glass-panel">
+        <div class="modal-header">
+          <h3>🏆 Achievements & Stats</h3>
+          <button class="modal-close" id="closeAchievements">&times;</button>
+        </div>
+        <div class="achievements-list" id="achievementsList">
+          <!-- Populated by JavaScript -->
+        </div>
+        <div class="career-stats" id="careerStats">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
