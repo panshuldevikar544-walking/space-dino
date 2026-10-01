@@ -1000,18 +1000,18 @@ class GameEngine {
       localStorage.setItem('dino_highscore', this.highScore.toString());
     }
 
-    // Death particles burst
-    const colors = [this.themeColors[this.theme].dino, '#ffffff', '#ff2a85'];
-    for (let i = 0; i < 35; i++) {
+    // HUGE explosion particles burst
+    const colors = ['#ff0000', '#ff8438', '#ffc43d', '#ffffff', this.themeColors[this.theme].dino];
+    for (let i = 0; i < 150; i++) {
       this.particles.push({
         x: this.dino.x + 20,
         y: this.dino.y + 20,
-        vx: (Math.random() * 2 - 1) * 7,
-        vy: (Math.random() * 2 - 1) * 7 - 2,
-        size: 3 + Math.random() * 5,
+        vx: (Math.random() * 2 - 1) * 15,
+        vy: (Math.random() * 2 - 1) * 15,
+        size: 3 + Math.random() * 8,
         color: colors[Math.floor(Math.random() * colors.length)],
-        life: 1.0,
-        decay: 0.02 + Math.random() * 0.03
+        life: 1.5,
+        decay: 0.01 + Math.random() * 0.02
       });
     }
 
@@ -1056,6 +1056,27 @@ class GameEngine {
   // UPDATE LOOP (PHYSICS & SPAWNING)
   // ============================================================
   update(dt) {
+    if (this.state === this.STATE_GAMEOVER) {
+      // Allow particles and floating texts to animate during explosion
+      for (let i = this.particles.length - 1; i >= 0; i--) {
+        const p = this.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= p.decay;
+        if (p.life <= 0) {
+          this.particles.splice(i, 1);
+        }
+      }
+      for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
+        const ft = this.floatingTexts[i];
+        ft.y -= dt * 25;
+        ft.life -= dt * 0.8;
+        if (ft.life <= 0) {
+          this.floatingTexts.splice(i, 1);
+        }
+      }
+      return;
+    }
     if (this.state !== this.STATE_PLAYING) return;
 
     // Day / Night Cycle (Full day-night in 45 seconds of running)
