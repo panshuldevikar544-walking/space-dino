@@ -1949,7 +1949,7 @@ class GameEngine {
   // ============================================================
   gameLoop(currentTime) {
     let dt = (currentTime - this.lastTime) / 1000;
-    if (dt > 0.1) dt = 0.1; // Cap delta time to prevent spiral of death
+    if (dt > 0.035) dt = 0.035; // Cap delta time tighter (max ~28fps skip) to prevent fast-forward teleporting on phone lag
     this.lastTime = currentTime;
 
     // Use a fixed timestep to decouple game speed from monitor refresh rate.
