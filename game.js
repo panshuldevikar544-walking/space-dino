@@ -491,8 +491,8 @@ class GameEngine {
     // Target: R = ~175px range (increased), H = ~191px height (increased)
     // R = 2.0 * (2 * 8.75) / 0.20 = 175px
     // H = vy^2 / (2g) = 8.75^2 / 0.40 = 191.4px
-    this.BASE_SPEED = 2.0;          // Slower starting speed
-    this.MAX_SPEED = 12.0;          // Lower max speed
+    this.BASE_SPEED = 1.8;          // Slower starting speed
+    this.MAX_SPEED = 10.0;          // Lower max speed
     this.GRAVITY = 0.20;            // Slower falling speed
     this.JUMP_FORCE = -8.75;        // Adjusted for height and range goals
 
@@ -1118,9 +1118,9 @@ class GameEngine {
     if (this.dino.slowMoActive) {
       currentMax *= 0.6;
     }
-    // Curve: speed = BASE_SPEED + (distanceRun / 1000)^1.25
+    // Curve: speed = BASE_SPEED + (distanceRun / 1200)^1.15
     // Provides a very slow start that builds up much more gradually
-    let calculatedSpeed = this.BASE_SPEED + Math.pow(this.distanceRun / 1000, 1.25);
+    let calculatedSpeed = this.BASE_SPEED + Math.pow(this.distanceRun / 1200, 1.15);
     this.speed = Math.min(calculatedSpeed, currentMax);
 
     if (this.speed >= this.BASE_SPEED * 2.0) {
@@ -1716,8 +1716,7 @@ class GameEngine {
 
     // Draw procedural pixel matrix
     ctx.fillStyle = dinoColor;
-    ctx.shadowColor = dinoColor;
-    ctx.shadowBlur = this.theme === 'classic' ? 0 : 10;
+    ctx.shadowBlur = 0; // Disabled for massive mobile performance boost
 
     const path = getSpritePath(spriteKey, pixelSize);
     ctx.save();
@@ -1765,8 +1764,7 @@ class GameEngine {
       if (obs.type === 'cactus') {
         const cactusColor = colors.obstacle;
         ctx.fillStyle = cactusColor;
-        ctx.shadowColor = cactusColor;
-        ctx.shadowBlur = this.theme === 'classic' ? 0 : 8;
+        ctx.shadowBlur = 0; // Disabled for massive mobile performance boost
 
         const spriteKey = (obs.subtype === 'tall' || obs.subtype === 'tall_group') 
           ? 'cactusTall' 
@@ -1787,8 +1785,7 @@ class GameEngine {
       } else if (obs.type === 'ptero') {
         const pteroColor = colors.ptero;
         ctx.fillStyle = pteroColor;
-        ctx.shadowColor = pteroColor;
-        ctx.shadowBlur = this.theme === 'classic' ? 0 : 10;
+        ctx.shadowBlur = 0; // Disabled for massive mobile performance boost
 
         const spriteKey = obs.frame === 0 ? 'pteroUp' : 'pteroDown';
         const pixelSize = 2.8;
