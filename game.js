@@ -444,6 +444,27 @@ const PIXEL_DATA = {
   ]
 };
 
+const spritePathCache = {};
+function getSpritePath(spriteKey, pixelSize) {
+  const cacheKey = spriteKey + '_' + pixelSize;
+  if (spritePathCache[cacheKey]) return spritePathCache[cacheKey];
+
+  const path = new Path2D();
+  const spriteMatrix = PIXEL_DATA[spriteKey];
+  if (!spriteMatrix) return path;
+
+  for (let r = 0; r < spriteMatrix.length; r++) {
+    const row = spriteMatrix[r];
+    for (let c = 0; c < row.length; c++) {
+      if (row[c] === 'X') {
+        path.rect(c * pixelSize, r * pixelSize, pixelSize, pixelSize);
+      }
+    }
+  }
+  spritePathCache[cacheKey] = path;
+  return path;
+}
+
 // ============================================================
 // 3. MAIN GAME ENGINE
 // ============================================================
@@ -1678,16 +1699,16 @@ class GameEngine {
 
   renderDino(ctx, colors) {
     ctx.save();
-    let spriteMatrix;
+    let spriteKey;
 
     if (this.state === this.STATE_GAMEOVER) {
-      spriteMatrix = PIXEL_DATA.dinoDead;
+      spriteKey = 'dinoDead';
     } else if (!this.dino.isGrounded && !this.dino.jetpackActive) {
-      spriteMatrix = PIXEL_DATA.dinoJump;
+      spriteKey = 'dinoJump';
     } else if (this.dino.isDucking) {
-      spriteMatrix = this.dino.runFrame === 0 ? PIXEL_DATA.dinoDuck1 : PIXEL_DATA.dinoDuck2;
+      spriteKey = this.dino.runFrame === 0 ? 'dinoDuck1' : 'dinoDuck2';
     } else {
-      spriteMatrix = this.dino.runFrame === 0 ? PIXEL_DATA.dinoRun1 : PIXEL_DATA.dinoRun2;
+      spriteKey = this.dino.runFrame === 0 ? 'dinoRun1' : 'dinoRun2';
     }
 
     const pixelSize = 3;
@@ -1698,14 +1719,11 @@ class GameEngine {
     ctx.shadowColor = dinoColor;
     ctx.shadowBlur = this.theme === 'classic' ? 0 : 10;
 
-    for (let r = 0; r < spriteMatrix.length; r++) {
-      const row = spriteMatrix[r];
-      for (let c = 0; c < row.length; c++) {
-        if (row[c] === 'X') {
-          ctx.fillRect(this.dino.x + c * pixelSize, this.dino.y + r * pixelSize, pixelSize, pixelSize);
-        }
-      }
-    }
+    const path = getSpritePath(spriteKey, pixelSize);
+    ctx.save();
+    ctx.translate(this.dino.x, this.dino.y);
+    ctx.fill(path);
+    ctx.restore();
 
     // Invincibility Aura
     if (this.dino.invincibleTimeLeft > 0) {
@@ -1750,24 +1768,21 @@ class GameEngine {
         ctx.shadowColor = cactusColor;
         ctx.shadowBlur = this.theme === 'classic' ? 0 : 8;
 
-        const sprite = (obs.subtype === 'tall' || obs.subtype === 'tall_group') 
-          ? PIXEL_DATA.cactusTall 
-          : PIXEL_DATA.cactusSmall;
+        const spriteKey = (obs.subtype === 'tall' || obs.subtype === 'tall_group') 
+          ? 'cactusTall' 
+          : 'cactusSmall';
         const pixelSize = (obs.subtype === 'tall' || obs.subtype === 'tall_group') ? 2.8 : 2.8;
 
         const count = obs.subtype === 'double_small' ? 2 : (obs.subtype === 'triple_small' ? 3 : (obs.subtype === 'tall_group' ? 2 : 1));
         const spacing = (obs.subtype === 'tall' || obs.subtype === 'tall_group') ? 26 : 22;
 
+        const path = getSpritePath(spriteKey, pixelSize);
         for (let i = 0; i < count; i++) {
           const offsetX = obs.x + i * spacing;
-          for (let r = 0; r < sprite.length; r++) {
-            const row = sprite[r];
-            for (let c = 0; c < row.length; c++) {
-              if (row[c] === 'X') {
-                ctx.fillRect(offsetX + c * pixelSize, obs.y + r * pixelSize, pixelSize, pixelSize);
-              }
-            }
-          }
+          ctx.save();
+          ctx.translate(offsetX, obs.y);
+          ctx.fill(path);
+          ctx.restore();
         }
       } else if (obs.type === 'ptero') {
         const pteroColor = colors.ptero;
@@ -1775,17 +1790,14 @@ class GameEngine {
         ctx.shadowColor = pteroColor;
         ctx.shadowBlur = this.theme === 'classic' ? 0 : 10;
 
-        const sprite = obs.frame === 0 ? PIXEL_DATA.pteroUp : PIXEL_DATA.pteroDown;
+        const spriteKey = obs.frame === 0 ? 'pteroUp' : 'pteroDown';
         const pixelSize = 2.8;
 
-        for (let r = 0; r < sprite.length; r++) {
-          const row = sprite[r];
-          for (let c = 0; c < row.length; c++) {
-            if (row[c] === 'X') {
-              ctx.fillRect(obs.x + c * pixelSize, obs.y + r * pixelSize, pixelSize, pixelSize);
-            }
-          }
-        }
+        const path = getSpritePath(spriteKey, pixelSize);
+        ctx.save();
+        ctx.translate(obs.x, obs.y);
+        ctx.fill(path);
+        ctx.restore();
       }
     });
     ctx.restore();
