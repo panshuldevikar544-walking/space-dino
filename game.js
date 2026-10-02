@@ -186,6 +186,27 @@ class AudioController {
     noise.start(now);
   }
 
+  // Sci-fi Laser pew
+  playLaser() {
+    if (!this.sfxEnabled || !this.ctx) return;
+    this.resume();
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(880, now); // high pitch
+    osc.frequency.exponentialRampToValueAtTime(110, now + 0.1); // drop quickly
+
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.11);
+  }
+
   // Retro 8-bit dynamic chiptune background beat
   startBGM() {
     if (!this.bgmEnabled || !this.ctx || this.bgmTimer) return;
@@ -258,6 +279,224 @@ class AudioController {
 // ============================================================
 // Authentic pixel art rendered accurately at any scale without external image loads!
 const PIXEL_DATA = {
+  // OSTRICH
+  ostrichRun1: [
+    ".......XXX......",
+    "......XXXX......",
+    "......XX.X......",
+    "......XXXX......",
+    "........X.......",
+    ".......XXXXX....",
+    ".....XXXXXXXX...",
+    "...XXXXXXXXXX...",
+    "..XXXXXXXXX.....",
+    "....XXXXXXX.....",
+    "......XX........",
+    "......X.X.......",
+    ".....XX.XX......",
+    ".....X...X......",
+    "....XX...XX.....",
+    "................"
+  ],
+  ostrichRun2: [
+    ".......XXX......",
+    "......XXXX......",
+    "......XX.X......",
+    "......XXXX......",
+    "........X.......",
+    ".......XXXXX....",
+    ".....XXXXXXXX...",
+    "...XXXXXXXXXX...",
+    "..XXXXXXXXX.....",
+    "....XXXXXXX.....",
+    "......XX........",
+    ".......X........",
+    "......XXX.......",
+    ".....X...X......",
+    "....XX...XX.....",
+    "................"
+  ],
+  ostrichDuck1: [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    ".....XXXXXXXX...",
+    "...XXXXXXXXXX...",
+    "..XXXXXXXXX.XXX.",
+    "....XXXXXXXXX.X.",
+    "......XX...XXXX.",
+    "......X.X.......",
+    ".....XX.XX......",
+    ".....X...X......",
+    "....XX...XX.....",
+    "................"
+  ],
+  ostrichDuck2: [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    ".....XXXXXXXX...",
+    "...XXXXXXXXXX...",
+    "..XXXXXXXXX.XXX.",
+    "....XXXXXXXXX.X.",
+    "......XX...XXXX.",
+    ".......X........",
+    "......XXX.......",
+    ".....X...X......",
+    "....XX...XX.....",
+    "................"
+  ],
+  ostrichIdle: [
+    ".......XXX......",
+    "......XXXX......",
+    "......XX.X......",
+    "......XXXX......",
+    "........X.......",
+    ".......XXXXX....",
+    ".....XXXXXXXX...",
+    "...XXXXXXXXXX...",
+    "..XXXXXXXXX.....",
+    "....XXXXXXX.....",
+    "......XX........",
+    "......X.X.......",
+    "......X.X.......",
+    "......X.X.......",
+    ".....XX.XX......",
+    "................"
+  ],
+  ostrichDead: [
+    "................",
+    "................",
+    "................",
+    ".......XXX......",
+    "......XXXX......",
+    "......XX.X......",
+    "......XXXX......",
+    ".......X.X......",
+    ".......X........",
+    ".......XXXXX....",
+    ".....XXXXXXXX...",
+    "...XXXXXXXXXX...",
+    "..XXXXXXXXX.....",
+    "....XXXXXXX.....",
+    ".....X....X.....",
+    "....XX....XX...."
+  ],
+  // NINJA
+  ninjaRun1: [
+    ".......XXX......",
+    "......XXXXX.....",
+    ".....XX...XX....",
+    ".....XX...XX....",
+    "......XXXXX.....",
+    ".......XXX......",
+    ".....XXXXXXX....",
+    "....XXXXXXXXX...",
+    "...XXX.XXX.XXX..",
+    "...XX..XXX..XX..",
+    ".......XXX......",
+    "......XXXXX.....",
+    "......X...X.....",
+    ".....XX...XX....",
+    ".....X.....X....",
+    "................"
+  ],
+  ninjaRun2: [
+    ".......XXX......",
+    "......XXXXX.....",
+    ".....XX...XX....",
+    ".....XX...XX....",
+    "......XXXXX.....",
+    ".......XXX......",
+    ".....XXXXXXX....",
+    "....XXXXXXXXX...",
+    "...XXX.XXX.XXX..",
+    "...XX..XXX..XX..",
+    ".......XXX......",
+    "......XXXXX.....",
+    ".......X.X......",
+    "......XX.XX.....",
+    "......X...X.....",
+    "................"
+  ],
+  ninjaDuck1: [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    ".......XXX......",
+    "......XXXXX.....",
+    ".....XX...XX....",
+    "....XXX...XXX...",
+    "....XXXXXXXXX...",
+    "...XXX.XXX.XXX..",
+    "...XX..XXX..XX..",
+    "......XXXXX.....",
+    "......X...X.....",
+    ".....XX...XX....",
+    "................"
+  ],
+  ninjaDuck2: [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    ".......XXX......",
+    "......XXXXX.....",
+    ".....XX...XX....",
+    "....XXX...XXX...",
+    "....XXXXXXXXX...",
+    "...XXX.XXX.XXX..",
+    "...XX..XXX..XX..",
+    "......XXXXX.....",
+    ".......X.X......",
+    "......XX.XX.....",
+    "................"
+  ],
+  ninjaIdle: [
+    ".......XXX......",
+    "......XXXXX.....",
+    ".....XX...XX....",
+    ".....XX...XX....",
+    "......XXXXX.....",
+    ".......XXX......",
+    ".....XXXXXXX....",
+    "....XXXXXXXXX...",
+    "...XX..XXX..XX..",
+    "...XX..XXX..XX..",
+    ".......XXX......",
+    "......XXXXX.....",
+    "......X...X.....",
+    "......X...X.....",
+    ".....XX...XX....",
+    "................"
+  ],
+  ninjaDead: [
+    "................",
+    ".......X.X......",
+    "........X.......",
+    ".......X.X......",
+    ".......XXX......",
+    "......XXXXX.....",
+    ".....XX...XX....",
+    ".....XX...XX....",
+    "......XXXXX.....",
+    ".......XXX......",
+    ".....XXXXXXX....",
+    "....XXXXXXXXX...",
+    "...XX..XXX..XX..",
+    "...XX..XXX..XX..",
+    ".......XXX......",
+    "......XXXXX....."
+  ],
   // Dino Running Frame 1 (16x16 simplified pixel matrix)
   dinoRun1: [
     "..........XXXX..",
@@ -444,25 +683,34 @@ const PIXEL_DATA = {
   ]
 };
 
-const spritePathCache = {};
-function getSpritePath(spriteKey, pixelSize) {
-  const cacheKey = spriteKey + '_' + pixelSize;
-  if (spritePathCache[cacheKey]) return spritePathCache[cacheKey];
+const spriteCanvasCache = {};
+function getSpriteCanvas(spriteKey, pixelSize, color) {
+  const cacheKey = spriteKey + '_' + pixelSize + '_' + color;
+  if (spriteCanvasCache[cacheKey]) return spriteCanvasCache[cacheKey];
 
-  const path = new Path2D();
   const spriteMatrix = PIXEL_DATA[spriteKey];
-  if (!spriteMatrix) return path;
+  if (!spriteMatrix) return null;
 
+  const width = spriteMatrix[0].length * pixelSize;
+  const height = spriteMatrix.length * pixelSize;
+
+  const offscreen = document.createElement('canvas');
+  offscreen.width = width;
+  offscreen.height = height;
+  const ctx = offscreen.getContext('2d');
+  
+  ctx.fillStyle = color;
   for (let r = 0; r < spriteMatrix.length; r++) {
     const row = spriteMatrix[r];
     for (let c = 0; c < row.length; c++) {
       if (row[c] === 'X') {
-        path.rect(c * pixelSize, r * pixelSize, pixelSize, pixelSize);
+        ctx.fillRect(c * pixelSize, r * pixelSize, pixelSize, pixelSize);
       }
     }
   }
-  spritePathCache[cacheKey] = path;
-  return path;
+  
+  spriteCanvasCache[cacheKey] = offscreen;
+  return offscreen;
 }
 
 // ============================================================
@@ -528,15 +776,19 @@ class GameEngine {
       shieldActive: false,
       slowMoActive: false,
       jetpackActive: false,
+      laserActive: false,
       powerupTimeLeft: 0,
       powerupTotalTime: 0,
       activePowerupType: null
     };
 
+    this.laserTimer = 0;
+
     // Entities
     this.obstacles = [];
     this.powerups = [];
     this.particles = [];
+    this.lasers = [];
     this.floatingTexts = [];
     this.nextObstacleDistance = 0;
 
@@ -662,6 +914,16 @@ class GameEngine {
     this.achievementsList = document.getElementById('achievementsList');
     this.careerStatsContainer = document.getElementById('careerStats');
     this.dinoColorPicker = document.getElementById('dinoColorPicker');
+    this.customDinoColor = localStorage.getItem('dino_custom_color') || null;
+    if (this.customDinoColor && this.dinoColorPicker) {
+      this.dinoColorPicker.value = this.customDinoColor;
+    }
+
+    this.charSelect = document.getElementById('charSelect');
+    this.selectedCharacter = localStorage.getItem('dino_character') || 'dino';
+    if (this.charSelect) {
+      this.charSelect.value = this.selectedCharacter;
+    }
 
     this.updateHUD();
   }
@@ -721,6 +983,14 @@ class GameEngine {
     if (this.dinoColorPicker) {
       this.dinoColorPicker.addEventListener('input', (e) => {
         this.customDinoColor = e.target.value;
+        localStorage.setItem('dino_custom_color', this.customDinoColor);
+      });
+    }
+
+    if (this.charSelect) {
+      this.charSelect.addEventListener('change', (e) => {
+        this.selectedCharacter = e.target.value;
+        localStorage.setItem('dino_character', this.selectedCharacter);
       });
     }
 
@@ -806,25 +1076,12 @@ class GameEngine {
       this.handleDuck(false);
     }, { passive: false });
 
-    // Tap on Canvas itself (Jump on top 70%, duck on bottom 30%)
-    this.canvas.addEventListener('pointerdown', (e) => {
+    // Tap canvas to start
+    this.canvas.addEventListener('mousedown', () => {
       this.audio.resume();
       if (this.state === this.STATE_IDLE || this.state === this.STATE_GAMEOVER) {
         this.startGame();
-        return;
       }
-      const rect = this.canvas.getBoundingClientRect();
-      const relativeY = (e.clientY - rect.top) / rect.height;
-      if (relativeY > 0.7) {
-        this.handleDuck(true);
-      } else {
-        this.handleJumpPress();
-      }
-    });
-
-    this.canvas.addEventListener('pointerup', () => {
-      this.handleJumpRelease();
-      this.handleDuck(false);
     });
 
     // Achievements Modal
@@ -1324,6 +1581,48 @@ class GameEngine {
       }
     }
 
+    // Auto-fire Lasers if Active
+    if (this.dino.laserActive) {
+      this.laserTimer -= dt;
+      if (this.laserTimer <= 0) {
+        this.laserTimer = 0.4; // fire every 0.4 seconds
+        this.audio.playLaser();
+        this.lasers.push({
+          x: this.dino.x + this.dino.w,
+          y: this.dino.y + 15, // eye level
+          w: 25,
+          h: 4,
+          vx: 15 // fast laser speed
+        });
+      }
+    }
+
+    // Update Lasers & Collisions with Obstacles
+    for (let i = this.lasers.length - 1; i >= 0; i--) {
+      const l = this.lasers[i];
+      l.x += l.vx;
+      
+      let laserHit = false;
+      for (let j = this.obstacles.length - 1; j >= 0; j--) {
+        const obs = this.obstacles[j];
+        // simple AABB collision
+        if (l.x < obs.x + obs.w && l.x + l.w > obs.x && l.y < obs.y + obs.h && l.y + l.h > obs.y) {
+          // Hit!
+          this.audio.playShieldBreak();
+          this.createPuffParticles(obs.x + obs.w / 2, obs.y + obs.h / 2, 15, '#ff2a85');
+          this.obstacles.splice(j, 1);
+          laserHit = true;
+          this.score += 15; // bonus for laser destruction
+          this.addFloatingText('+15', obs.x, obs.y - 10, '#ff2a85');
+          break;
+        }
+      }
+
+      if (laserHit || l.x > this.V_WIDTH) {
+        this.lasers.splice(i, 1);
+      }
+    }
+
     // Update Particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
@@ -1417,7 +1716,7 @@ class GameEngine {
   }
 
   spawnPowerup() {
-    const types = ['shield', 'slowmo', 'jetpack', 'bonus'];
+    const types = ['shield', 'slowmo', 'jetpack', 'laser', 'bonus'];
     const chosenType = types[Math.floor(Math.random() * types.length)];
 
     this.powerups.push({
@@ -1449,6 +1748,10 @@ class GameEngine {
       this.dino.jetpackActive = true;
       this.triggerAchievement('jetpack_joy');
       this.addFloatingText('JETPACK BOOST!', this.dino.x + 30, this.dino.y - 20, '#ff2a85');
+    } else if (pup.type === 'laser') {
+      this.activatePowerup('laser', 'LASER', '🔫', 8);
+      this.dino.laserActive = true;
+      this.addFloatingText('LASER EYES!', this.dino.x + 30, this.dino.y - 20, '#ff2a85');
     } else if (pup.type === 'bonus') {
       this.distanceRun += 450;
       this.addFloatingText('+150 BONUS!', this.dino.x + 30, this.dino.y - 20, '#ffe600');
@@ -1474,6 +1777,7 @@ class GameEngine {
     this.dino.shieldActive = false;
     this.dino.slowMoActive = false;
     this.dino.jetpackActive = false;
+    this.dino.laserActive = false;
     this.dino.activePowerupType = null;
     this.dino.powerupTimeLeft = 0;
     this.hudPowerupPill.classList.add('hidden');
@@ -1563,6 +1867,9 @@ class GameEngine {
 
     // Power-ups
     this.renderPowerups(ctx);
+
+    // Lasers
+    this.renderLasers(ctx);
 
     // Dino Player
     this.renderDino(ctx, colors);
@@ -1700,29 +2007,26 @@ class GameEngine {
   renderDino(ctx, colors) {
     ctx.save();
     let spriteKey;
+    const charPrefix = this.selectedCharacter || 'dino';
 
     if (this.state === this.STATE_GAMEOVER) {
-      spriteKey = 'dinoDead';
+      spriteKey = charPrefix + 'Dead';
     } else if (!this.dino.isGrounded && !this.dino.jetpackActive) {
-      spriteKey = 'dinoJump';
+      spriteKey = charPrefix + 'Jump';
+      if (!PIXEL_DATA[spriteKey]) spriteKey = charPrefix + 'Idle';
     } else if (this.dino.isDucking) {
-      spriteKey = this.dino.runFrame === 0 ? 'dinoDuck1' : 'dinoDuck2';
+      spriteKey = this.dino.runFrame === 0 ? charPrefix + 'Duck1' : charPrefix + 'Duck2';
     } else {
-      spriteKey = this.dino.runFrame === 0 ? 'dinoRun1' : 'dinoRun2';
+      spriteKey = this.dino.runFrame === 0 ? charPrefix + 'Run1' : charPrefix + 'Run2';
     }
 
     const pixelSize = 3;
     const dinoColor = this.customDinoColor || colors.dino;
 
-    // Draw procedural pixel matrix
-    ctx.fillStyle = dinoColor;
-    ctx.shadowBlur = 0; // Disabled for massive mobile performance boost
-
-    const path = getSpritePath(spriteKey, pixelSize);
-    ctx.save();
-    ctx.translate(this.dino.x, this.dino.y);
-    ctx.fill(path);
-    ctx.restore();
+    const offscreen = getSpriteCanvas(spriteKey, pixelSize, dinoColor);
+    if (offscreen) {
+      ctx.drawImage(offscreen, this.dino.x, this.dino.y);
+    }
 
     // Invincibility Aura
     if (this.dino.invincibleTimeLeft > 0) {
@@ -1763,9 +2067,6 @@ class GameEngine {
     this.obstacles.forEach(obs => {
       if (obs.type === 'cactus') {
         const cactusColor = colors.obstacle;
-        ctx.fillStyle = cactusColor;
-        ctx.shadowBlur = 0; // Disabled for massive mobile performance boost
-
         const spriteKey = (obs.subtype === 'tall' || obs.subtype === 'tall_group') 
           ? 'cactusTall' 
           : 'cactusSmall';
@@ -1774,27 +2075,22 @@ class GameEngine {
         const count = obs.subtype === 'double_small' ? 2 : (obs.subtype === 'triple_small' ? 3 : (obs.subtype === 'tall_group' ? 2 : 1));
         const spacing = (obs.subtype === 'tall' || obs.subtype === 'tall_group') ? 26 : 22;
 
-        const path = getSpritePath(spriteKey, pixelSize);
-        for (let i = 0; i < count; i++) {
-          const offsetX = obs.x + i * spacing;
-          ctx.save();
-          ctx.translate(offsetX, obs.y);
-          ctx.fill(path);
-          ctx.restore();
+        const offscreen = getSpriteCanvas(spriteKey, pixelSize, cactusColor);
+        if (offscreen) {
+          for (let i = 0; i < count; i++) {
+            const offsetX = obs.x + i * spacing;
+            ctx.drawImage(offscreen, offsetX, obs.y);
+          }
         }
       } else if (obs.type === 'ptero') {
         const pteroColor = colors.ptero;
-        ctx.fillStyle = pteroColor;
-        ctx.shadowBlur = 0; // Disabled for massive mobile performance boost
-
         const spriteKey = obs.frame === 0 ? 'pteroUp' : 'pteroDown';
         const pixelSize = 2.8;
 
-        const path = getSpritePath(spriteKey, pixelSize);
-        ctx.save();
-        ctx.translate(obs.x, obs.y);
-        ctx.fill(path);
-        ctx.restore();
+        const offscreen = getSpriteCanvas(spriteKey, pixelSize, pteroColor);
+        if (offscreen) {
+          ctx.drawImage(offscreen, obs.x, obs.y);
+        }
       }
     });
     ctx.restore();
@@ -1812,6 +2108,9 @@ class GameEngine {
         glowColor = '#05ffa1';
       } else if (pup.type === 'jetpack') {
         symbol = '🚀';
+        glowColor = '#ff2a85';
+      } else if (pup.type === 'laser') {
+        symbol = '🔫';
         glowColor = '#ff2a85';
       } else if (pup.type === 'bonus') {
         symbol = '⭐';
@@ -1832,6 +2131,20 @@ class GameEngine {
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(symbol, pup.x + 16, renderY + 17);
+    });
+    ctx.restore();
+  }
+
+  renderLasers(ctx) {
+    ctx.save();
+    this.lasers.forEach(l => {
+      ctx.fillStyle = '#ff2a85';
+      ctx.shadowColor = '#ff2a85';
+      ctx.shadowBlur = 10;
+      ctx.fillRect(l.x, l.y, l.w, l.h);
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowBlur = 0;
+      ctx.fillRect(l.x + 4, l.y + 1, l.w - 8, l.h - 2);
     });
     ctx.restore();
   }

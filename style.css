@@ -881,6 +881,10 @@ kbd {
   .hud-bar {
     font-size: 0.75rem;
   }
+  
+  .crt-overlay {
+    display: none; /* Expensive blend mode kills mobile GPU */
+  }
 }
 
 /* Custom Dino Color Picker */

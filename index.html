@@ -23,6 +23,22 @@
           <h1>DINO RUNNER</h1>
           <span class="badge">EVOLUTION ARCADE</span>
         </div>
+        
+        <!-- Custom Character & Color Pickers -->
+        <div class="character-customizer" style="display: flex; gap: 8px; margin-left: 20px; align-items: center; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.08);">
+          <div class="dino-color-wrapper" title="Choose Character">
+            <label for="charSelect">👤</label>
+            <select id="charSelect" style="background: var(--glass-bg); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px;">
+              <option value="dino">Dino</option>
+              <option value="ostrich">Ostrich</option>
+              <option value="ninja">Ninja</option>
+            </select>
+          </div>
+          <div class="dino-color-wrapper" title="Customize Color">
+            <label for="dinoColorPicker">🎨</label>
+            <input type="color" id="dinoColorPicker" value="#00f0ff">
+          </div>
+        </div>
       </div>
 
       <div class="header-controls">
@@ -32,12 +48,6 @@
           <button class="theme-btn" data-theme="classic" title="Classic Monochrome">🕹️ Classic</button>
           <button class="theme-btn" data-theme="sunset" title="Desert Sunset">🏜️ Sunset</button>
           <button class="theme-btn" data-theme="matrix" title="Matrix Green">💻 Matrix</button>
-          
-          <!-- Custom Dino Color Picker -->
-          <div class="dino-color-wrapper" title="Customize Dino Color">
-            <label for="dinoColorPicker">🎨 Dino:</label>
-            <input type="color" id="dinoColorPicker" value="#00f0ff">
-          </div>
         </div>
 
         <!-- Sound & Music Toggles -->
