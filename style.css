@@ -987,7 +987,13 @@ kbd {
   }
   
   .canvas-viewport {
-    min-height: 150px;
+    aspect-ratio: auto;
+    height: 35vh;
+    min-height: 260px;
+  }
+  
+  .game-footer-info {
+    display: none;
   }
   
   .score-summary {
